@@ -38,6 +38,7 @@ langgraph-checkpoint==4.0.1
 langgraph-prebuilt==1.0.8
 langgraph-sdk==0.3.11
 langsmith==0.7.16
+lxml==6.0.2
 markdown-it-py==4.0.0
 MarkupSafe==3.0.3
 marshmallow==3.26.2
@@ -61,6 +62,7 @@ pydantic_core==2.41.5
 pydeck==0.9.1
 Pygments==2.19.2
 python-dateutil==2.9.0.post0
+python-docx==1.2.0
 python-dotenv==1.2.2
 pytz==2026.1.post1
 PyYAML==6.0.3
