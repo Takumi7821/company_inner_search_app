@@ -50,7 +50,8 @@ RAG_TOP_FOLDER_PATH = "./data"
 SUPPORTED_EXTENSIONS = {
     ".pdf": PyMuPDFLoader,
     ".docx": Docx2txtLoader,
-    ".csv": lambda path: CSVLoader(path, encoding="utf-8")
+    ".csv": lambda path: CSVLoader(path, encoding="utf-8"),
+    ".txt": TextLoader
 }
 WEB_URL_LOAD_TARGETS = [
     "https://generative-ai.web-camp.io/"
@@ -110,3 +111,14 @@ NO_DOC_MATCH_MESSAGE = """
 CONVERSATION_LOG_ERROR_MESSAGE = "過去の会話履歴の表示に失敗しました。"
 GET_LLM_RESPONSE_ERROR_MESSAGE = "回答生成に失敗しました。"
 DISP_ANSWER_ERROR_MESSAGE = "回答表示に失敗しました。"
+
+# ==========================================
+# チャンク分割とRetrieverの設定の定数
+# ==========================================
+# テキスト分割設定
+TEXT_CHUNK_SIZE = 500
+TEXT_CHUNK_OVERLAP = 50
+TEXT_CHUNK_SEPARATOR = "\n"
+
+# Retriever設定
+RETRIEVER_SEARCH_K = 3
