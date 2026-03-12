@@ -94,6 +94,21 @@ def display_app_layout():
     """
     # 画面を左右2分割するレイアウトを作成
     left_column, right_column = st.columns([2, 8])
+
+    # 左画面の背景色を薄い青にする（Streamlit の DOM に依存するためシンプルなセレクタを使用）
+    st.markdown(
+        """
+        <style>
+        /* 左カラムを薄い青にする */
+        .stApp .stColumns > div:nth-child(1) {
+            background-color: #e6f7ff !important;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
     
     # レイアウトの幅は、左画面が全体の2割、右画面が全体の8割になるように設定
     # 左画面の表示
