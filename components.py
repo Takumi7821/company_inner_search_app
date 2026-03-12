@@ -61,11 +61,16 @@ def display_right_panel(conv_container=None):
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
         with target.chat_message("assistant"):
-            target.success(
-                "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-                "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-            )
-            target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+            # チャットメッセージ内をカラム化して、アイコンの右側に表示領域を確保する
+            cols = target.columns([0.4, 9.6])
+            # 左側カラムはアイコン領域の位置合わせのため空のままにする
+            # 右側カラムに success/warning を表示することで、アイコンの右にボックスが並ぶ
+            with cols[1]:
+                cols[1].success(
+                    "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
+                    "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
+                )
+                cols[1].warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
