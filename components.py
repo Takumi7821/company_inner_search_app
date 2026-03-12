@@ -64,8 +64,21 @@ def display_right_panel():
                 "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
             )
             st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
-
     display_conversation_log()
+
+    # 右側に入力例（これからの会話）を追記
+    st.markdown("**【入力例（これからの会話）】**")
+    example_conversation = (
+        "ユーザー: 社員の育成方針に関するMTGの議事録を探して\n"
+        "アシスタント: 以下のファイルに該当する可能性があります。...\n"
+        "ユーザー: その中で、評価基準に関する部分だけ抜粋して教えて。\n"
+        "アシスタント: （該当ページの抜粋を提示）"
+    )
+    st.code(example_conversation, wrap_lines=True, language=None)
+
+    # 右画面下部にチャット入力欄を表示して、入力値を呼び出し元に返す
+    chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
+    return chat_message
 
 def display_app_layout():
     """
@@ -81,7 +94,9 @@ def display_app_layout():
 
     # 右画面の表示
     with right_column:
-        display_right_panel()
+        chat_message = display_right_panel()
+
+    return chat_message
 
 
 def display_conversation_log():
