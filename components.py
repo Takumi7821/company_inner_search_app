@@ -27,6 +27,10 @@ def display_left_panel():
         options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
         label_visibility="collapsed"
     )
+    # スペースの追加
+    st.markdown(" ")
+    # 区切り線の追加
+    st.divider()
     # 「社内文書検索」の機能説明
     st.markdown("**【「社内文書検索」を選択した場合】**")
     # 「st.info()」を使うと青枠で表示される
@@ -40,8 +44,6 @@ def display_left_panel():
     )
     # スペースの追加
     st.markdown(" ")
-    # 区切り線の追加
-    st.divider()
     # 「社内問い合わせ」の機能説明
     st.markdown("**【「社内問い合わせ」を選択した場合】**")
     # 「st.info()」を使うと青枠で表示される
