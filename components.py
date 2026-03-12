@@ -71,6 +71,7 @@ def display_right_panel():
         language=None
     )
 
+    #
     # 「社内問い合わせ」の機能説明（右画面にも表示）
     st.markdown("**【「社内問い合わせ」を選択した場合】**")
     st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
