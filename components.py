@@ -65,11 +65,17 @@ def display_right_panel(conv_container=None):
     # タイトル（画面上部に固定）
     target.markdown(f"# {ct.APP_NAME}")
     
-    # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
+    # 初期メッセージ（会話履歴が空の場合）はセッションに格納しておく（描画は display_conversation_log に任せる）
     if not st.session_state.messages:
-        with st.chat_message("assistant"):
-            st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
-            st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+        welcome_text = (
+            "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
+            "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
+        )
+        note_text = "具体的に入力した方が行きたい通りの回答を得られやすです。"
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": {"mode": "system", "answer": welcome_text, "note": note_text}
+        })
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
@@ -116,45 +122,58 @@ def display_conversation_log(container=None):
     会話ログの一覧表示
     """
     target = container if container is not None else st
-
     # 会話ログのループ処理（chat_message コンテナを使ってアイコンを表示）
-    # 新しいメッセージが下に追加されるよう、履歴は古い順（先頭が古い）で描画する
-    for message in reversed(st.session_state.messages):
+    # st.session_state.messages は append で古い順に格納されるため、そのまま描画する
+    for message in st.session_state.messages:
         with target.chat_message(message["role"]):
             # ユーザー入力値の場合
             if message["role"] == "user":
                 st.markdown(message["content"])
                 continue
 
-            # アシスタントの表示
-            if message["content"]["mode"] == ct.ANSWER_MODE_1:
-                if not "no_file_path_flg" in message["content"]:
-                    st.markdown(message["content"]["main_message"])
-                    icon = utils.get_source_icon(message['content']['main_file_path'])
-                    if "main_page_number" in message["content"]:
-                        st.success(f"{message['content']['main_file_path']} (p.{message['content']['main_page_number']})", icon=icon)
-                    else:
-                        st.success(f"{message['content']['main_file_path']}", icon=icon)
+            # アシスタントの表示（content は dict か文字列のどちらかで来る可能性がある）
+            content = message.get("content")
+            if isinstance(content, dict):
+                mode = content.get("mode")
+                # 社内文書検索モード
+                if mode == ct.ANSWER_MODE_1:
+                    if not content.get("no_file_path_flg"):
+                        st.markdown(content.get("main_message", ""))
+                        icon = utils.get_source_icon(content.get('main_file_path', ""))
+                        if "main_page_number" in content:
+                            st.success(f"{content['main_file_path']} (p.{content['main_page_number']})", icon=icon)
+                        else:
+                            st.success(f"{content.get('main_file_path', '')}", icon=icon)
 
-                    if "sub_message" in message["content"]:
-                        st.markdown(message["content"]["sub_message"])
-                        for sub_choice in message["content"]["sub_choices"]:
-                            icon = utils.get_source_icon(sub_choice['source'])
-                            if "page_number" in sub_choice:
-                                st.info(f"{sub_choice['source']} (p.{sub_choice['page_number']})", icon=icon)
-                            else:
-                                st.info(f"{sub_choice['source']}", icon=icon)
+                        if "sub_message" in content:
+                            st.markdown(content.get("sub_message", ""))
+                            for sub_choice in content.get("sub_choices", []):
+                                icon = utils.get_source_icon(sub_choice['source'])
+                                if "page_number" in sub_choice:
+                                    st.info(f"{sub_choice['source']} (p.{sub_choice['page_number']})", icon=icon)
+                                else:
+                                    st.info(f"{sub_choice['source']}", icon=icon)
+                    else:
+                        st.markdown(content.get("answer", ""))
+                # 社内問い合わせモード
+                elif mode == ct.ANSWER_MODE_2:
+                    st.markdown(content.get("answer", ""))
+                    if "file_info_list" in content:
+                        st.divider()
+                        st.markdown(f"##### {content.get('message', '')}")
+                        for file_info in content.get("file_info_list", []):
+                            file_path_for_icon = file_info.split(" (p.")[0]
+                            icon = utils.get_source_icon(file_path_for_icon)
+                            st.info(file_info, icon=icon)
+                # その他（システムメッセージ等）
                 else:
-                    st.markdown(message["content"]["answer"])            
+                    if content.get("answer"):
+                        st.success(content.get("answer"))
+                    if content.get("note"):
+                        st.warning(content.get("note"))
             else:
-                st.markdown(message["content"]["answer"])            
-                if "file_info_list" in message["content"]:
-                    st.divider()
-                    st.markdown(f"##### {message['content']['message']}")
-                    for file_info in message["content"]["file_info_list"]:
-                        file_path_for_icon = file_info.split(" (p.")[0]
-                        icon = utils.get_source_icon(file_path_for_icon)
-                        st.info(file_info, icon=icon)
+                # 文字列などの単純な表示
+                st.markdown(str(content))
 
 
 def display_search_llm_response(llm_response):
