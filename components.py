@@ -57,13 +57,16 @@ def display_right_panel():
     """
     st.markdown(f"## {ct.APP_NAME}")
     
-    if not st.session_state.messages:
+    # 初回表示の歓迎メッセージを一度だけ表示する
+    if not st.session_state.get("welcome_shown", False):
         with st.chat_message("assistant"):
             st.markdown(
                 "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
                 "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
             )
             st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+        # フラグを立てて再表示を防ぐ
+        st.session_state.welcome_shown = True
 
     display_conversation_log()
 
