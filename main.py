@@ -62,8 +62,8 @@ if not "initialized" in st.session_state:
 # タイトル（画面上部に固定）
 st.markdown(f"# {ct.APP_NAME}")
 
-# 右画面に表示されるチャット入力欄の値と会話コンテナを受け取る
-chat_message, conv_container = cn.display_app_layout()
+# 右画面に表示されるチャット入力欄の値と会話コンテナとスピナープレースホルダを受け取る
+chat_message, conv_container, spinner_placeholder = cn.display_app_layout()
 
 
 ############################################################
@@ -74,7 +74,7 @@ if chat_message:
 
     # LLMによる回答生成（できれば右カラムの会話コンテナ上にスピナーを表示、できない場合はglobal spinnerを使用）
     try:
-        spinner_ctx = conv_container.spinner(ct.SPINNER_TEXT)
+        spinner_ctx = spinner_placeholder.spinner(ct.SPINNER_TEXT)
     except Exception:
         spinner_ctx = st.spinner(ct.SPINNER_TEXT)
 

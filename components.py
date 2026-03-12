@@ -20,7 +20,7 @@ def display_left_panel():
     """
     左画面の表示
     """
-    st.markdown("## 利用目的")
+    st.markdown("# 利用目的")
 
     st.session_state.mode = st.radio(
         label="利用目的を選択してください",
@@ -94,13 +94,16 @@ def display_app_layout():
     with left_column:
         display_left_panel()
 
-    # 右画面の表示
+    # 右側の表示
     with right_column:
         # 会話用のコンテナ（履歴をここに描画）を作成
         conv_container = right_column.container()
+        # 入力欄の上に配置するスピナープレースホルダを用意
+        # spinner_placeholder は input の上に表示する意図で使います
+        spinner_placeholder = right_column.empty()
         chat_message = display_right_panel(conv_container=conv_container)
 
-    return chat_message, conv_container
+    return chat_message, conv_container, spinner_placeholder
 
 
 def display_conversation_log(container=None):
