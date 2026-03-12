@@ -22,11 +22,8 @@ def display_left_panel():
     """
     st.markdown("## 利用目的")
 
-    st.session_state.mode = st.radio(
-        label="利用目的を選択してください",
-        options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
-        label_visibility="collapsed"
-    )
+    # モード選択は右側で行います（ここでは説明のみ表示）
+    st.markdown("右側の画面でモードを選択してください。")
     # 「社内文書検索」の機能説明
     st.markdown("**【「社内文書検索」を選択した場合】**")
     # 「st.info()」を使うと青枠で表示される
