@@ -22,8 +22,11 @@ def display_left_panel():
     """
     st.markdown("## 利用目的")
 
-    # モード選択は右側で行います（ここでは説明のみ表示）
-    st.markdown("右側の画面でモードを選択してください。")
+    st.session_state.mode = st.radio(
+        label="利用目的を選択してください",
+        options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
+        label_visibility="collapsed"
+    )
     # 「社内文書検索」の機能説明
     st.markdown("**【「社内文書検索」を選択した場合】**")
     # 「st.info()」を使うと青枠で表示される
@@ -54,44 +57,13 @@ def display_right_panel():
     """
     st.markdown(f"## {ct.APP_NAME}")
     
-    # 右側でもモード選択と説明を表示（入力欄のみの表示になる問題を回避）
-    st.radio(
-        label="利用目的を選択してください",
-        options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
-        key="mode",
-        label_visibility="visible"
-    )
-
-    # 「社内文書検索」の機能説明（右画面にも表示）
-    st.markdown("**【「社内文書検索」を選択した場合】**")
-    st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
-    st.code(
-        "【入力例】\n社員の育成方針に関するMTGの議事録",
-        wrap_lines=True,
-        language=None
-    )
-
-    #
-    # 「社内問い合わせ」の機能説明（右画面にも表示）
-    st.markdown("**【「社内問い合わせ」を選択した場合】**")
-    st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
-    st.code(
-        "【入力例】\n人事部に所属している従業員情報を一覧化して",
-        wrap_lines=True,
-        language=None
-    )
-
-    # 初回表示、または会話ログが空の場合に歓迎メッセージを表示する
-    messages = st.session_state.get("messages", [])
-    if (not st.session_state.get("welcome_shown", False)) or (len(messages) == 0):
+    if not st.session_state.messages:
         with st.chat_message("assistant"):
             st.markdown(
                 "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
                 "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
             )
             st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
-        # フラグを立てて再表示を防ぐ
-        st.session_state.welcome_shown = True
 
     display_conversation_log()
 
@@ -101,7 +73,8 @@ def display_app_layout():
     """
     # 画面を左右2分割するレイアウトを作成
     left_column, right_column = st.columns([2, 8])
-
+    
+    # レイアウトの幅は、左画面が全体の2割、右画面が全体の8割になるように設定
     # 左画面の表示
     with left_column:
         display_left_panel()
@@ -109,10 +82,6 @@ def display_app_layout():
     # 右画面の表示
     with right_column:
         display_right_panel()
-        # 右カラムにチャット入力を配置して、入力値を呼び出し元に返す
-        chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
-
-        return chat_message
 
 
 def display_conversation_log():
