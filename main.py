@@ -72,8 +72,13 @@ if chat_message:
     # ユーザーメッセージのログ出力
     logger.info({"message": chat_message, "application_mode": st.session_state.mode})
 
-    # LLMによる回答生成（スピナーを右カラムの会話コンテナ上に表示）
-    with conv_container.spinner(ct.SPINNER_TEXT):
+    # LLMによる回答生成（できれば右カラムの会話コンテナ上にスピナーを表示、できない場合はglobal spinnerを使用）
+    try:
+        spinner_ctx = conv_container.spinner(ct.SPINNER_TEXT)
+    except Exception:
+        spinner_ctx = st.spinner(ct.SPINNER_TEXT)
+
+    with spinner_ctx:
         try:
             llm_response = utils.get_llm_response(chat_message)
         except Exception as e:
