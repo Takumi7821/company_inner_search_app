@@ -65,17 +65,7 @@ def display_right_panel(conv_container=None):
     # タイトル（画面上部に固定）
     target.markdown(f"# {ct.APP_NAME}")
     
-    # 初期メッセージ（会話履歴が空の場合）はセッションに格納しておく（描画は display_conversation_log に任せる）
-    if not st.session_state.messages:
-        welcome_text = (
-            "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-            "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-        )
-        note_text = "具体的に入力した方が行きたい通りの回答を得られやすです。"
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": {"mode": "system", "answer": welcome_text, "note": note_text}
-        })
+    # 初期メッセージの表示制御はアプリ起動時に一度だけ行うため、ここでは処理しない
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
