@@ -55,8 +55,6 @@ def display_right_panel(conv_container=None):
     """
     右画面の表示
     """
-    st.markdown(f"## {ct.APP_NAME}")
-
     # 会話描画先を決定
     target = conv_container if conv_container is not None else st
 
@@ -111,43 +109,43 @@ def display_conversation_log(container=None):
     """
     target = container if container is not None else st
 
-    # 会話ログのループ処理
+    # 会話ログのループ処理（chat_message コンテナを使ってアイコンを表示）
     for message in st.session_state.messages:
-        # role によって表示を分ける（ユーザーは右寄せ風に、アシスタントは通常表示）
-        if message["role"] == "user":
-            target.markdown(f"**ユーザー:** {message['content']}")
-            continue
+        with target.chat_message(message["role"]):
+            # ユーザー入力値の場合
+            if message["role"] == "user":
+                st.markdown(message["content"])
+                continue
 
-        # ここからアシスタントメッセージの表示
-        # 「社内文書検索」の場合、テキストの種類に応じて表示形式を分岐処理
-        if message["content"]["mode"] == ct.ANSWER_MODE_1:
-            if not "no_file_path_flg" in message["content"]:
-                target.markdown(message["content"]["main_message"])
-                icon = utils.get_source_icon(message['content']['main_file_path'])
-                if "main_page_number" in message["content"]:
-                    target.success(f"{message['content']['main_file_path']} (p.{message['content']['main_page_number']})", icon=icon)
+            # アシスタントの表示
+            if message["content"]["mode"] == ct.ANSWER_MODE_1:
+                if not "no_file_path_flg" in message["content"]:
+                    st.markdown(message["content"]["main_message"])
+                    icon = utils.get_source_icon(message['content']['main_file_path'])
+                    if "main_page_number" in message["content"]:
+                        st.success(f"{message['content']['main_file_path']} (p.{message['content']['main_page_number']})", icon=icon)
+                    else:
+                        st.success(f"{message['content']['main_file_path']}", icon=icon)
+
+                    if "sub_message" in message["content"]:
+                        st.markdown(message["content"]["sub_message"])
+                        for sub_choice in message["content"]["sub_choices"]:
+                            icon = utils.get_source_icon(sub_choice['source'])
+                            if "page_number" in sub_choice:
+                                st.info(f"{sub_choice['source']} (p.{sub_choice['page_number']})", icon=icon)
+                            else:
+                                st.info(f"{sub_choice['source']}", icon=icon)
                 else:
-                    target.success(f"{message['content']['main_file_path']}", icon=icon)
-
-                if "sub_message" in message["content"]:
-                    target.markdown(message["content"]["sub_message"])
-                    for sub_choice in message["content"]["sub_choices"]:
-                        icon = utils.get_source_icon(sub_choice['source'])
-                        if "page_number" in sub_choice:
-                            target.info(f"{sub_choice['source']} (p.{sub_choice['page_number']})", icon=icon)
-                        else:
-                            target.info(f"{sub_choice['source']}", icon=icon)
+                    st.markdown(message["content"]["answer"])            
             else:
-                target.markdown(message["content"]["answer"])            
-        else:
-            target.markdown(message["content"]["answer"])            
-            if "file_info_list" in message["content"]:
-                target.divider()
-                target.markdown(f"##### {message['content']['message']}")
-                for file_info in message["content"]["file_info_list"]:
-                    file_path_for_icon = file_info.split(" (p.")[0]
-                    icon = utils.get_source_icon(file_path_for_icon)
-                    target.info(file_info, icon=icon)
+                st.markdown(message["content"]["answer"])            
+                if "file_info_list" in message["content"]:
+                    st.divider()
+                    st.markdown(f"##### {message['content']['message']}")
+                    for file_info in message["content"]["file_info_list"]:
+                        file_path_for_icon = file_info.split(" (p.")[0]
+                        icon = utils.get_source_icon(file_path_for_icon)
+                        st.info(file_info, icon=icon)
 
 
 def display_search_llm_response(llm_response):
