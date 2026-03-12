@@ -59,8 +59,7 @@ if not "initialized" in st.session_state:
 # 4. 初期表示
 ############################################################
 # タイトルとモード表示を含む画面レイアウトを表示
-# タイトル（画面上部に固定）
-st.markdown(f"# {ct.APP_NAME}")
+
 
 # 右画面に表示されるチャット入力欄の値と会話コンテナとスピナープレースホルダを受け取る
 chat_message, conv_container, spinner_placeholder = cn.display_app_layout()

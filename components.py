@@ -57,7 +57,9 @@ def display_right_panel(conv_container=None):
     """
     # 会話描画先を決定
     target = conv_container if conv_container is not None else st
-
+    # タイトル（画面上部に固定）
+    target.markdown(f"# {ct.APP_NAME}")
+    
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
         with target.chat_message("assistant"):
