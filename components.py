@@ -118,7 +118,8 @@ def display_conversation_log(container=None):
     target = container if container is not None else st
 
     # 会話ログのループ処理（chat_message コンテナを使ってアイコンを表示）
-    for message in st.session_state.messages:
+    # 新しいメッセージが下に追加されるよう、履歴は古い順（先頭が古い）で描画する
+    for message in reversed(st.session_state.messages):
         with target.chat_message(message["role"]):
             # ユーザー入力値の場合
             if message["role"] == "user":
