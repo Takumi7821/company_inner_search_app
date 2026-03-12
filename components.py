@@ -70,7 +70,7 @@ def display_right_panel(conv_container=None):
         with st.chat_message("assistant"):
             st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。上記で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
 
-            target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+    target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
