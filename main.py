@@ -53,21 +53,9 @@ except Exception as e:
 if not "initialized" in st.session_state:
     st.session_state.initialized = True
     logger.info(ct.APP_BOOT_MESSAGE)
-    # セッション内の会話履歴を初期化し、初回起動時のみウェルカムメッセージを追加する
+    # セッション内の会話履歴を初期化（ウェルカムは UI の上部に静的表示するため追加しない）
     if "messages" not in st.session_state:
         st.session_state.messages = []
-        welcome_text = (
-            "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-            "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-        )
-        note_text = "具体的に入力した方が行きたい通りの回答を得られやすです。"
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": {"mode": "system", "answer": welcome_text, "note": note_text}
-        })
-    else:
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
 
 
 ############################################################

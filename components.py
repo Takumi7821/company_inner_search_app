@@ -67,9 +67,13 @@ def display_right_panel(conv_container=None):
     
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
-        with st.chat_message("assistant"):
-            st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
-            st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+            # 画面上部に固定の初期アシスタントメッセージを表示（セッションには追加しない）
+            with target.chat_message("assistant"):
+                target.success(
+                    "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
+                    "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
+                )
+                target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
