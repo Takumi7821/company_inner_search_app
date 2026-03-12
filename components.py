@@ -66,12 +66,12 @@ def display_right_panel(header_container=None):
     target.markdown(f"# {ct.APP_NAME}")
     
     # 画面上部に固定の初期アシスタントメッセージを表示（セッションには追加しない）
-    with st.chat_message("assistant"):
-        st.success(
+    with target.chat_message("assistant"):
+        target.success(
                     "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
                     "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
                 )
-        st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+        target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴の描画は呼び出し元で行う（即時表示の制御を main.py に委ねる）
 
@@ -82,11 +82,10 @@ def display_right_panel(header_container=None):
         "ユーザー: その中で、評価基準に関する部分だけ抜粋して教えて。\n"
         "アシスタント: （該当ページの抜粋を提示）"
     )
-    st.code(example_conversation, wrap_lines=True, language=None)
+    target.code(example_conversation, wrap_lines=True, language=None)
 
-    # 右画面下部にチャット入力欄を表示して、入力値を呼び出し元に返す
-    chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
-    return chat_message
+    # （チャット入力は呼び出し元のレイアウトで下部に表示するため、ここでは作らない）
+    return None
 
 def display_app_layout():
     """
@@ -108,7 +107,10 @@ def display_app_layout():
         conv_container = right_column.container()
         # 入力欄の上に配置するスピナープレースホルダを用意（入力欄の直上に表示するためconv_containerの下に配置）
         spinner_placeholder = right_column.empty()
-        chat_message = display_right_panel(header_container=header_container)
+        # ヘッダー（タイトル・初期メッセージ・入力例）を描画（チャット入力は下部に配置する）
+        display_right_panel(header_container=header_container)
+        # 右画面下部にチャット入力欄を表示して、入力値を呼び出し元に返す
+        chat_message = right_column.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
 
     return chat_message, conv_container, spinner_placeholder
 
