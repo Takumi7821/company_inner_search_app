@@ -15,7 +15,14 @@ from dotenv import load_dotenv
 import streamlit as st
 from docx import Document
 from langchain_community.document_loaders import WebBaseLoader
-from langchain.text_splitter import CharacterTextSplitter
+try:
+    from langchain.text_splitter import CharacterTextSplitter
+except Exception:
+    # 一部環境では別パッケージ名／モジュール名になる可能性があるため互換性を確保
+    try:
+        from langchain_text_splitters import CharacterTextSplitter
+    except Exception:
+        raise
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 import constants as ct
