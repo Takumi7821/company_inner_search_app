@@ -56,12 +56,12 @@ def display_left_panel():
         language=None
     )
 
-def display_right_panel(conv_container=None):
+def display_right_panel(header_container=None):
     """
     右画面の表示
     """
-    # 会話描画先を決定
-    target = conv_container if conv_container is not None else st
+    # 固定ヘッダー描画先を決定（会話履歴は別のコンテナに描画される想定）
+    target = header_container if header_container is not None else st
     # タイトル（画面上部に固定）
     target.markdown(f"# {ct.APP_NAME}")
     
@@ -102,12 +102,13 @@ def display_app_layout():
 
     # 右側の表示
     with right_column:
-        # 会話用のコンテナ（履歴をここに描画）を作成
+        # 右側上部に固定するヘッダー用コンテナを作成（タイトルや初期メッセージ、入力例）
+        header_container = right_column.container()
+        # 会話用のコンテナ（履歴をここに描画）を作成（ヘッダーの下に配置される）
         conv_container = right_column.container()
-        # 入力欄の上に配置するスピナープレースホルダを用意
-        # spinner_placeholder は input の上に表示する意図で使います
+        # 入力欄の上に配置するスピナープレースホルダを用意（入力欄の直上に表示するためconv_containerの下に配置）
         spinner_placeholder = right_column.empty()
-        chat_message = display_right_panel(conv_container=conv_container)
+        chat_message = display_right_panel(header_container=header_container)
 
     return chat_message, conv_container, spinner_placeholder
 
