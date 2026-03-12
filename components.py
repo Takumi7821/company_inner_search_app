@@ -20,7 +20,7 @@ def display_left_panel():
     """
     左画面の表示
     """
-    st.markdown("#用目的")
+    st.markdown("**利用目的**")
 
     st.session_state.mode = st.radio(
         label="利用目的を選択してください",
@@ -61,7 +61,6 @@ def display_right_panel(conv_container=None):
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
         with target.chat_message("assistant"):
-            # アシスタントのアイコンと success ボックスを同じ行に表示する（chat_message が横並びを担当）
             target.success(
                 "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
                 "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
