@@ -57,8 +57,9 @@ def display_right_panel():
     """
     st.markdown(f"## {ct.APP_NAME}")
     
-    # 初回表示の歓迎メッセージを一度だけ表示する
-    if not st.session_state.get("welcome_shown", False):
+    # 初回表示、または会話ログが空の場合に歓迎メッセージを表示する
+    messages = st.session_state.get("messages", [])
+    if (not st.session_state.get("welcome_shown", False)) or (len(messages) == 0):
         with st.chat_message("assistant"):
             st.markdown(
                 "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
