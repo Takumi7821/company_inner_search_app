@@ -27,7 +27,8 @@ import constants as ct
 ############################################################
 # ブラウザタブの表示文言を設定
 st.set_page_config(
-    page_title=ct.APP_NAME
+    page_title=ct.APP_NAME,
+    layout="wide"
 )
 
 # ログ出力を行うためのロガーの設定
@@ -71,8 +72,8 @@ if chat_message:
     # ユーザーメッセージのログ出力
     logger.info({"message": chat_message, "application_mode": st.session_state.mode})
 
-    # LLMによる回答生成
-    with st.spinner(ct.SPINNER_TEXT):
+    # LLMによる回答生成（スピナーを右カラムの会話コンテナ上に表示）
+    with conv_container.spinner(ct.SPINNER_TEXT):
         try:
             llm_response = utils.get_llm_response(chat_message)
         except Exception as e:

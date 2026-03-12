@@ -99,8 +99,26 @@ def get_llm_response(chat_message):
     )
 
     # 会話履歴なしでもLLMに理解してもらえる、独立した入力テキストを取得するためのRetrieverを作成
+    # 一時的にRetrieverの返却件数を調整（モードごとの要件に対応）
+    retriever = st.session_state.retriever
+    original_search_kwargs = None
+    try:
+        # 保存しておいて後で戻す
+        original_search_kwargs = retriever.search_kwargs.copy() if hasattr(retriever, "search_kwargs") else None
+    except Exception:
+        original_search_kwargs = None
+
+    # モードが「社内問い合わせ」の場合は多めにドキュメントを取得する（従業員一覧など）
+    if st.session_state.mode == ct.ANSWER_MODE_2:
+        try:
+            # 増やしたい上限（必要に応じて値を調整）
+            retriever.search_kwargs = {"k": max(retriever.search_kwargs.get("k", ct.RETRIEVER_SEARCH_K), 20)}
+        except Exception:
+            # 属性が操作できない場合は無視して進める
+            pass
+
     history_aware_retriever = create_history_aware_retriever(
-        llm, st.session_state.retriever, question_generator_prompt
+        llm, retriever, question_generator_prompt
     )
 
     # LLMから回答を取得する用のChainを作成
@@ -112,5 +130,11 @@ def get_llm_response(chat_message):
     llm_response = chain.invoke({"input": chat_message, "chat_history": st.session_state.chat_history})
     # LLMレスポンスを会話履歴に追加
     st.session_state.chat_history.extend([HumanMessage(content=chat_message), llm_response["answer"]])
+    # 後始末: Retriever の search_kwargs を元に戻す
+    try:
+        if original_search_kwargs is not None and hasattr(retriever, "search_kwargs"):
+            retriever.search_kwargs = original_search_kwargs
+    except Exception:
+        pass
 
     return llm_response
