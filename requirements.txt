@@ -17,6 +17,7 @@ click==8.3.1
 coloredlogs==15.0.1
 dataclasses-json==0.6.7
 distro==1.9.0
+docx2txt==0.9
 durationpy==0.10
 filelock==3.25.2
 flatbuffers==25.12.19
@@ -91,6 +92,7 @@ pydantic-settings==2.13.1
 pydantic_core==2.41.5
 pydeck==0.9.1
 Pygments==2.19.2
+PyMuPDF==1.27.2
 PyPika==0.51.1
 pyproject_hooks==1.2.0
 python-dateutil==2.9.0.post0
