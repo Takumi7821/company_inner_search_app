@@ -73,8 +73,7 @@ def display_right_panel(conv_container=None):
                 )
         st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
-    # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
-    display_conversation_log(container=conv_container)
+    # 会話履歴の描画は呼び出し元で行う（即時表示の制御を main.py に委ねる）
 
     # 右側に入力例（これからの会話）を追記（履歴の下、入力欄の上に表示）
     example_conversation = (

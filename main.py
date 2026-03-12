@@ -67,6 +67,9 @@ if not "initialized" in st.session_state:
 # 右画面に表示されるチャット入力欄の値と会話コンテナとスピナープレースホルダを受け取る
 chat_message, conv_container, spinner_placeholder = cn.display_app_layout()
 
+# 初期表示: 現在の会話履歴を右コンテナに描画（チャット送信前の既存履歴表示）
+cn.display_conversation_log(container=conv_container)
+
 
 ############################################################
 # 5-6. チャット送信時の処理（会話履歴へ追加し、会話コンテナが上部に表示される）
@@ -106,4 +109,9 @@ if chat_message:
     st.session_state.messages.append({"role": "user", "content": chat_message})
     st.session_state.messages.append({"role": "assistant", "content": content})
 
-    # 会話は display_app_layout 内で描画されるため、ここで再描画は行わない
+    # 直後に最新の会話を表示するため、一度コンテナ内容をクリアしてから再描画する
+    try:
+        conv_container.empty()
+    except Exception:
+        pass
+    cn.display_conversation_log(container=conv_container)
