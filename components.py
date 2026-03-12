@@ -81,6 +81,10 @@ def display_app_layout():
     # 右画面の表示
     with right_column:
         display_right_panel()
+        # 右カラムにチャット入力を配置して、入力値を呼び出し元に返す
+        chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
+
+        return chat_message
 
 
 def display_conversation_log():

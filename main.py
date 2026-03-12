@@ -41,30 +41,13 @@ try:
     # 初期化処理（「initialize.py」の「initialize」関数を実行）
     initialize()
 except Exception as e:
-    # エラーログの出力
-    logger.error(f"{ct.INITIALIZE_ERROR_MESSAGE}\n{e}")
-    # エラーメッセージの画面表示
-    st.error(utils.build_error_message(ct.INITIALIZE_ERROR_MESSAGE), icon=ct.ERROR_ICON)
-    # 後続の処理を中断
-    st.stop()
-
-# アプリ起動時のログファイルへの出力
-if not "initialized" in st.session_state:
-    st.session_state.initialized = True
-    logger.info(ct.APP_BOOT_MESSAGE)
-
-
-############################################################
-# 4. 初期表示
-############################################################
-# タイトルとモード表示を含む画面レイアウトを表示
-cn.display_app_layout()
-
-
-############################################################
-# 5. 会話ログの表示
-############################################################
-try:
+    # 4. 初期表示（レイアウト表示と右カラムのチャット入力受け取り）
+    try:
+        chat_message = cn.display_app_layout()
+    except Exception as e:
+        logger.error(f"{ct.COMMON_ERROR_MESSAGE}\n{e}")
+        st.error(utils.build_error_message(ct.COMMON_ERROR_MESSAGE), icon=ct.ERROR_ICON)
+        st.stop()
     # 会話ログの表示
     cn.display_conversation_log()
 except Exception as e:
