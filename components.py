@@ -27,6 +27,10 @@ def display_left_panel():
         options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
         label_visibility="collapsed"
     )
+    # スペースの追加
+    st.markdown(" ")
+    # 区切り線の追加
+    st.divider()
     # 「社内文書検索」の機能説明
     st.markdown("**【「社内文書検索」を選択した場合】**")
     # 「st.info()」を使うと青枠で表示される
@@ -38,10 +42,6 @@ def display_left_panel():
         wrap_lines=True,
         language=None
     )
-    # スペースの追加
-    st.markdown(" ")
-    # 区切り線の追加
-    st.divider()
     # 「社内問い合わせ」の機能説明
     st.markdown("**【「社内問い合わせ」を選択した場合】**")
     # 「st.info()」を使うと青枠で表示される
@@ -61,16 +61,20 @@ def display_right_panel(conv_container=None):
     # 会話描画先を決定
     target = conv_container if conv_container is not None else st
     # タイトル（画面上部に固定）
-    target.markdown(f" {ct.APP_NAME}")
+    target.markdown(f"** {ct.APP_NAME} **", unsafe_allow_html=True)
     
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
         with target.chat_message("assistant"):
-            target.success(
-                "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-                "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-            )
-            target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+            # メッセージ表示幅を限定するために内部カラムを作成（これによりアイコンと横並びになりやすくする）
+            inner_cols = target.columns([1, 8])
+            # 左の小さいカラムは空にしておき、右側のカラムに success/warning を表示する
+            with inner_cols[1]:
+                inner_cols[1].success(
+                    "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
+                    "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
+                )
+                inner_cols[1].warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
@@ -84,8 +88,10 @@ def display_right_panel(conv_container=None):
     )
     st.code(example_conversation, wrap_lines=True, language=None)
 
-    # 右画面下部にチャット入力欄を表示して、入力値を呼び出し元に返す
-    chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
+    # 右画面下部にチャット入力欄を表示（幅を狭くして右側に寄せる）
+    # conv_container や target のスコープ内で列を作成して入力幅を調整
+    input_cols = target.columns([6, 2, 4])
+    chat_message = input_cols[1].chat_input(ct.CHAT_INPUT_HELPER_TEXT)
     return chat_message
 
 def display_app_layout():
