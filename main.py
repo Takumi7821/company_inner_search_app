@@ -106,9 +106,4 @@ if chat_message:
     st.session_state.messages.append({"role": "user", "content": chat_message})
     st.session_state.messages.append({"role": "assistant", "content": content})
 
-    # 生成した回答を即時表示するため、会話コンテナを再描画
-    try:
-        cn.display_conversation_log(container=conv_container)
-    except Exception:
-        # 再描画に失敗しても処理を継続（非致命）
-        pass
+    # 会話は display_app_layout 内で描画されるため、ここで再描画は行わない
