@@ -20,7 +20,7 @@ def display_left_panel():
     """
     左画面の表示
     """
-    st.markdown("# 利用目的")
+    st.markdown("利用目的")
 
     st.session_state.mode = st.radio(
         label="利用目的を選択してください",
