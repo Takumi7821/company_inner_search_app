@@ -56,29 +56,22 @@ def display_right_panel(conv_container=None):
     右画面の表示
     """
     st.markdown(f"## {ct.APP_NAME}")
-    
+
+    # 会話描画先を決定
+    target = conv_container if conv_container is not None else st
+
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
-        if conv_container:
-            with conv_container.chat_message("assistant"):
-                conv_container.markdown(
-                    "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-                    "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-                )
-                conv_container.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
-        else:
-            with st.chat_message("assistant"):
-                st.markdown(
-                    "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-                    "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-                )
-                st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+        target.markdown(
+            "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
+            "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
+        )
+        target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
 
     # 右側に入力例（これからの会話）を追記（履歴の下、入力欄の上に表示）
-    st.markdown("**【入力例（これからの会話）】**")
     example_conversation = (
         "ユーザー: 社員の育成方針に関するMTGの議事録を探して\n"
         "アシスタント: 以下のファイルに該当する可能性があります。...\n"
@@ -105,9 +98,11 @@ def display_app_layout():
 
     # 右画面の表示
     with right_column:
-        chat_message = display_right_panel()
+        # 会話用のコンテナ（履歴をここに描画）を作成
+        conv_container = right_column.container()
+        chat_message = display_right_panel(conv_container=conv_container)
 
-    return chat_message
+    return chat_message, conv_container
 
 
 def display_conversation_log(container=None):
@@ -118,57 +113,41 @@ def display_conversation_log(container=None):
 
     # 会話ログのループ処理
     for message in st.session_state.messages:
-        # 「message」辞書の中の「role」キーには「user」か「assistant」が入っている
-        with target.chat_message(message["role"]):
+        # role によって表示を分ける（ユーザーは右寄せ風に、アシスタントは通常表示）
+        if message["role"] == "user":
+            target.markdown(f"**ユーザー:** {message['content']}")
+            continue
 
-            # ユーザー入力値の場合、そのままテキストを表示するだけ
-            if message["role"] == "user":
-                target.markdown(message["content"])
-            
-            # LLMからの回答の場合
-            else:
-                # 「社内文書検索」の場合、テキストの種類に応じて表示形式を分岐処理
-                if message["content"]["mode"] == ct.ANSWER_MODE_1:
-                    
-                    # ファイルのありかの情報が取得できた場合（通常時）の表示処理
-                    if not "no_file_path_flg" in message["content"]:
-                        # 補足文の表示
-                        target.markdown(message["content"]["main_message"])
-
-                        # アイコンはファイルパス（ページ番号は含めない）で取得
-                        icon = utils.get_source_icon(message['content']['main_file_path'])
-                        # 参照元ドキュメントのページ番号が取得できた場合はファイル名とページ番号を表示
-                        if "main_page_number" in message["content"]:
-                            target.success(f"{message['content']['main_file_path']} (p.{message['content']['main_page_number']})", icon=icon)
-                        else:
-                            target.success(f"{message['content']['main_file_path']}", icon=icon)
-
-                        # サブドキュメントのありかを一覧表示
-                        if "sub_message" in message["content"]:
-                            target.markdown(message["content"]["sub_message"])
-                            for sub_choice in message["content"]["sub_choices"]:
-                                icon = utils.get_source_icon(sub_choice['source'])
-                                if "page_number" in sub_choice:
-                                    target.info(f"{sub_choice['source']} (p.{sub_choice['page_number']})", icon=icon)
-                                else:
-                                    target.info(f"{sub_choice['source']}", icon=icon)
-                    # ファイルのありかの情報が取得できなかった場合、LLMからの回答のみ表示
-                    else:
-                        target.markdown(message["content"]["answer"])
-                
-                # 「社内問い合わせ」の場合の表示処理
+        # ここからアシスタントメッセージの表示
+        # 「社内文書検索」の場合、テキストの種類に応じて表示形式を分岐処理
+        if message["content"]["mode"] == ct.ANSWER_MODE_1:
+            if not "no_file_path_flg" in message["content"]:
+                target.markdown(message["content"]["main_message"])
+                icon = utils.get_source_icon(message['content']['main_file_path'])
+                if "main_page_number" in message["content"]:
+                    target.success(f"{message['content']['main_file_path']} (p.{message['content']['main_page_number']})", icon=icon)
                 else:
-                    # LLMからの回答を表示
-                    target.markdown(message["content"]["answer"])
+                    target.success(f"{message['content']['main_file_path']}", icon=icon)
 
-                    # 参照元のありかを一覧表示
-                    if "file_info_list" in message["content"]:
-                        target.divider()
-                        target.markdown(f"##### {message['content']['message']}")
-                        for file_info in message["content"]["file_info_list"]:
-                            file_path_for_icon = file_info.split(" (p.")[0]
-                            icon = utils.get_source_icon(file_path_for_icon)
-                            target.info(file_info, icon=icon)
+                if "sub_message" in message["content"]:
+                    target.markdown(message["content"]["sub_message"])
+                    for sub_choice in message["content"]["sub_choices"]:
+                        icon = utils.get_source_icon(sub_choice['source'])
+                        if "page_number" in sub_choice:
+                            target.info(f"{sub_choice['source']} (p.{sub_choice['page_number']})", icon=icon)
+                        else:
+                            target.info(f"{sub_choice['source']}", icon=icon)
+            else:
+                target.markdown(message["content"]["answer"])            
+        else:
+            target.markdown(message["content"]["answer"])            
+            if "file_info_list" in message["content"]:
+                target.divider()
+                target.markdown(f"##### {message['content']['message']}")
+                for file_info in message["content"]["file_info_list"]:
+                    file_path_for_icon = file_info.split(" (p.")[0]
+                    icon = utils.get_source_icon(file_path_for_icon)
+                    target.info(file_info, icon=icon)
 
 
 def display_search_llm_response(llm_response):

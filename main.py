@@ -58,8 +58,8 @@ if not "initialized" in st.session_state:
 # 4. 初期表示
 ############################################################
 # タイトルとモード表示を含む画面レイアウトを表示
-# 右画面に表示されるチャット入力欄の値を受け取る
-chat_message = cn.display_app_layout()
+# 右画面に表示されるチャット入力欄の値と会話コンテナを受け取る
+chat_message, conv_container = cn.display_app_layout()
 
 
 ############################################################
@@ -94,3 +94,10 @@ if chat_message:
     # 会話履歴へ追加（会話履歴は右上のコンテナに表示され、入力欄はその下に固定される）
     st.session_state.messages.append({"role": "user", "content": chat_message})
     st.session_state.messages.append({"role": "assistant", "content": content})
+
+    # 生成した回答を即時表示するため、会話コンテナを再描画
+    try:
+        cn.display_conversation_log(container=conv_container)
+    except Exception:
+        # 再描画に失敗しても処理を継続（非致命）
+        pass
