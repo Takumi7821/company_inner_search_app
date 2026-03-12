@@ -81,7 +81,7 @@ def display_right_panel(conv_container=None):
         "アシスタント: （該当ページの抜粋を提示）"
     )
     st.code(example_conversation, wrap_lines=True, language=None)
-
+    target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
     # 右画面下部にチャット入力欄を表示して、入力値を呼び出し元に返す
     chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
     return chat_message
