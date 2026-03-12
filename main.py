@@ -102,27 +102,9 @@ if chat_message:
         st.error(utils.build_error_message(ct.DISP_ANSWER_ERROR_MESSAGE), icon=ct.ERROR_ICON)
         st.stop()
 
-    # 会話履歴へ追加（同一のユーザ入力が直前に既に追加されている場合は重複追加を回避）
-    add_user = True
-    if st.session_state.messages:
-        last = st.session_state.messages[-1]
-        if last.get("role") == "user" and last.get("content") == chat_message:
-            add_user = False
-
-    if add_user:
-        st.session_state.messages.append({"role": "user", "content": chat_message})
-    # assistant の回答は常に追加（ただし直前の assistant が同一内容ならスキップ）
-    add_assistant = True
-    if st.session_state.messages:
-        # find last assistant
-        for m in reversed(st.session_state.messages):
-            if m.get("role") == "assistant":
-                if m.get("content") == content:
-                    add_assistant = False
-                break
-
-    if add_assistant:
-        st.session_state.messages.append({"role": "assistant", "content": content})
+    # 会話履歴へ追加（ユーザメッセージ→アシスタント回答 を必ず順に追加する）
+    st.session_state.messages.append({"role": "user", "content": chat_message})
+    st.session_state.messages.append({"role": "assistant", "content": content})
 
     # 生成した回答を即時表示するため、会話コンテナを再描画
     try:
