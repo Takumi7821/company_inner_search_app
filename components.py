@@ -38,7 +38,10 @@ def display_left_panel():
         wrap_lines=True,
         language=None
     )
-
+    # スペースの追加
+    st.markdown(" ")
+    # 区切り線の追加
+    st.divider()
     # 「社内問い合わせ」の機能説明
     st.markdown("**【「社内問い合わせ」を選択した場合】**")
     # 「st.info()」を使うと青枠で表示される
@@ -58,7 +61,7 @@ def display_right_panel(conv_container=None):
     # 会話描画先を決定
     target = conv_container if conv_container is not None else st
     # タイトル（画面上部に固定）
-    target.markdown(f"# {ct.APP_NAME}")
+    target.markdown(f" {ct.APP_NAME}")
     
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
