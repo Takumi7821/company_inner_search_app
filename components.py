@@ -65,12 +65,10 @@ def display_right_panel(conv_container=None):
     
     # 初期メッセージ（会話履歴が空の場合）を会話コンテナに表示
     if not st.session_state.messages:
-        with target.chat_message("assistant"):
-            target.success(
-                "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-                "左側で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-            )
-            target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+        with st.chat_message("assistant"):
+            st.markdown("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。上記で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
+
+    target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
@@ -94,21 +92,6 @@ def display_app_layout():
     """
     # 画面を左右2分割するレイアウトを作成
     left_column, right_column = st.columns([2, 8])
-
-    # 左画面の背景色を薄い青にする（Streamlit の DOM に依存するためシンプルなセレクタを使用）
-    st.markdown(
-        """
-        <style>
-        /* 左カラムを薄い青にする */
-        .stApp .stColumns > div:nth-child(1) {
-            background-color: #e6f7ff !important;
-            padding: 12px;
-            border-radius: 8px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
     
     # レイアウトの幅は、左画面が全体の2割、右画面が全体の8割になるように設定
     # 左画面の表示
