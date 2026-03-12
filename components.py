@@ -57,6 +57,32 @@ def display_right_panel():
     """
     st.markdown(f"## {ct.APP_NAME}")
     
+    # 右側でもモード選択と説明を表示（入力欄のみの表示になる問題を回避）
+    st.radio(
+        label="利用目的を選択してください",
+        options=[ct.ANSWER_MODE_1, ct.ANSWER_MODE_2],
+        key="mode",
+        label_visibility="visible"
+    )
+
+    # 「社内文書検索」の機能説明（右画面にも表示）
+    st.markdown("**【「社内文書検索」を選択した場合】**")
+    st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
+    st.code(
+        "【入力例】\n社員の育成方針に関するMTGの議事録",
+        wrap_lines=True,
+        language=None
+    )
+
+    # 「社内問い合わせ」の機能説明（右画面にも表示）
+    st.markdown("**【「社内問い合わせ」を選択した場合】**")
+    st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
+    st.code(
+        "【入力例】\n人事部に所属している従業員情報を一覧化して",
+        wrap_lines=True,
+        language=None
+    )
+
     # 初回表示、または会話ログが空の場合に歓迎メッセージを表示する
     messages = st.session_state.get("messages", [])
     if (not st.session_state.get("welcome_shown", False)) or (len(messages) == 0):
