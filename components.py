@@ -69,6 +69,7 @@ def display_right_panel(conv_container=None):
     if not st.session_state.messages:
         with st.chat_message("assistant"):
             st.success("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
+            st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴は conv_container に描画する（conv_container が指定されていればそちらへ）
     display_conversation_log(container=conv_container)
@@ -81,7 +82,7 @@ def display_right_panel(conv_container=None):
         "アシスタント: （該当ページの抜粋を提示）"
     )
     st.code(example_conversation, wrap_lines=True, language=None)
-    target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+
     # 右画面下部にチャット入力欄を表示して、入力値を呼び出し元に返す
     chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
     return chat_message
