@@ -127,9 +127,9 @@ def get_llm_response(chat_message):
     chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
     # LLMへのリクエストとレスポンス取得
-    llm_response = chain.invoke({"input": chat_message, "chat_history": st.session_state.chat_history})
-    # LLMレスポンスを会話履歴に追加
-    st.session_state.chat_history.extend([HumanMessage(content=chat_message), llm_response["answer"]])
+    # ここでは各リクエストを独立に扱うため、チャット履歴は送らず現在の入力のみを渡す
+    llm_response = chain.invoke({"input": chat_message, "chat_history": []})
+    # チャット履歴の蓄積は行わない（アプリ側の表示履歴と混同を避けるため）
     # 後始末: Retriever の search_kwargs を元に戻す
     try:
         if original_search_kwargs is not None and hasattr(retriever, "search_kwargs"):
