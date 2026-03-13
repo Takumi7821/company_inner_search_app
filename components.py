@@ -91,15 +91,14 @@ def display_app_layout():
     """
     アプリのレイアウト表示
     """
-    # 画面を左右2分割するレイアウトを作成
-    left_column, right_column = st.columns([2, 8])
-    
-    # レイアウトの幅は、左画面が全体の2割、右画面が全体の8割になるように設定
-    # 左画面の表示
-    with left_column:
+    # 左画面はサイドバーに移動
+    with st.sidebar:
         display_left_panel()
 
-    # 右側の表示
+    # 右側（メイン領域）はフル幅のコンテナを使用
+    right_column = st.container()
+
+    # 右側の表示を行う
     with right_column:
         # 右側上部に固定するヘッダー用コンテナを作成（タイトルや初期メッセージ、入力例）
         header_container = right_column.container()
