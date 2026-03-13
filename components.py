@@ -66,11 +66,9 @@ def display_right_panel(header_container=None):
     target.markdown(f"# {ct.APP_NAME}")
     
     # 画面上部に固定の初期アシスタントメッセージを表示（セッションには追加しない）
-    with target.chat_message("assistant"):
-        # アイコンと吹き出しを横並びにするレイアウト
-        col_icon, col_bubble = target.columns([1, 9])
+    with target.columns([1, 9]) as (col_icon, col_bubble):
         # 左にアイコン（絵文字）、右に吹き出しでメッセージ表示
-        col_icon.markdown("🤖", unsafe_allow_html=False)
+        col_icon.chat_message("assistant")
         col_bubble.success(
             "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
             "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
