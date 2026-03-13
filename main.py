@@ -61,56 +61,32 @@ if not "initialized" in st.session_state:
 ############################################################
 # 4. 初期表示
 ############################################################
-# タイトルとモード表示を含む画面レイアウトを表示
+# タイトル表示
+cn.display_app_title()
 
+# モード表示
+cn.display_select_mode()
 
-# 右画面に表示されるチャット入力欄の値と会話コンテナとスピナープレースホルダを受け取る
-chat_message, conv_container, spinner_placeholder = cn.display_app_layout()
+# AIメッセージの初期表示
+cn.display_initial_ai_message()
 
 
 ############################################################
-# 5-6. チャット送信時の処理（会話履歴へ追加し、会話コンテナが上部に表示される）
-if chat_message:
-    # ユーザーメッセージのログ出力
-    logger.info({"message": chat_message, "application_mode": st.session_state.mode})
-
-    # LLMによる回答生成（できれば右カラムの会話コンテナ上にスピナーを表示、できない場合はglobal spinnerを使用）
-    try:
-        spinner_ctx = spinner_placeholder.spinner(ct.SPINNER_TEXT)
-    except Exception:
-        spinner_ctx = st.spinner(ct.SPINNER_TEXT)
-
-    with spinner_ctx:
-        try:
-            llm_response = utils.get_llm_response(chat_message)
-        except Exception as e:
-            logger.error(f"{ct.GET_LLM_RESPONSE_ERROR_MESSAGE}\n{e}")
-            st.error(utils.build_error_message(ct.GET_LLM_RESPONSE_ERROR_MESSAGE), icon=ct.ERROR_ICON)
-            st.stop()
-
-    # モードに応じて表示用の辞書データを作成（表示は conversation コンテナが行う）
-    try:
-        if st.session_state.mode == ct.ANSWER_MODE_1:
-            content = cn.build_search_content(llm_response)
-        elif st.session_state.mode == ct.ANSWER_MODE_2:
-            content = cn.build_contact_content(llm_response)
-        else:
-            content = {"mode": st.session_state.mode, "answer": llm_response.get("answer", "")}
-        logger.info({"message": content, "application_mode": st.session_state.mode})
-    except Exception as e:
-        logger.error(f"{ct.DISP_ANSWER_ERROR_MESSAGE}\n{e}")
-        st.error(utils.build_error_message(ct.DISP_ANSWER_ERROR_MESSAGE), icon=ct.ERROR_ICON)
-        st.stop()
-
-    # 会話履歴へ追加（ユーザメッセージ→アシスタント回答 を必ず順に追加する）
-    st.session_state.messages.append({"role": "user", "content": chat_message})
-    st.session_state.messages.append({"role": "assistant", "content": content})
-
-    # 直後に最新の会話を表示するため、処理後に描画を行う
-
-# 常に最新の会話を表示（送信があれば上で append 済み）
+# 5. 会話ログの表示
+############################################################
 try:
-    conv_container.empty()
-except Exception:
-    pass
-cn.display_conversation_log(container=conv_container)
+    # 会話ログの表示
+    cn.display_conversation_log()
+except Exception as e:
+    # エラーログの出力
+    logger.error(f"{ct.CONVERSATION_LOG_ERROR_MESSAGE}\n{e}")
+    # エラーメッセージの画面表示
+    st.error(utils.build_error_message(ct.CONVERSATION_LOG_ERROR_MESSAGE), icon=ct.ERROR_ICON)
+    # 後続の処理を中断
+    st.stop()
+
+
+############################################################
+# 6. チャット入力の受け付け
+############################################################
+chat_message = st.chat_input(ct.CHAT_INPUT_HELPER_TEXT)

@@ -66,9 +66,11 @@ def display_right_panel(header_container=None):
     target.markdown(f"# {ct.APP_NAME}")
     
     # 画面上部に固定の初期アシスタントメッセージを表示（セッションには追加しない）
-    with target.columns([1, 9]) as (col_icon, col_bubble):
+    with target.chat_message("assistant"):
+        # アイコンと吹き出しを横並びにするレイアウト（columns はコンテキストマネージャーではない）
+        col_icon, col_bubble = target.columns([1, 9])
         # 左にアイコン（絵文字）、右に吹き出しでメッセージ表示
-        col_icon.chat_message("assistant")
+        col_icon.
         col_bubble.success(
             "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
             "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
@@ -96,24 +98,28 @@ def display_app_layout():
     # 左画面はサイドバーに移動
     with st.sidebar:
         display_left_panel()
+    """
+    AIメッセージの初期表示
+    """
+    with st.chat_message("assistant"):
+        # 「st.success()」とすると緑枠で表示される
+        st.markdown("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。上記で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
 
-    # 右側（メイン領域）はフル幅のコンテナを使用
-    right_column = st.container()
+        # 「社内文書検索」の機能説明
+        st.markdown("**【「社内文書検索」を選択した場合】**")
+        # 「st.info()」を使うと青枠で表示される
+        st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
+        # 「st.code()」を使うとコードブロックの装飾で表示される
+        # 「wrap_lines=True」で折り返し設定、「language=None」で非装飾とする
+        st.code("【入力例】\n社員の育成方針に関するMTGの議事録", wrap_lines=True, language=None)
 
-    # 右側の表示を行う
-    with right_column:
-        # 右側上部に固定するヘッダー用コンテナを作成（タイトルや初期メッセージ、入力例）
-        header_container = right_column.container()
-        # 会話用のコンテナ（履歴をここに描画）を作成（ヘッダーの下に配置される）
-        conv_container = right_column.container()
-        # 入力欄の上に配置するスピナープレースホルダを用意（入力欄の直上に表示するためconv_containerの下に配置）
-        spinner_placeholder = right_column.empty()
-        # ヘッダー（タイトル・初期メッセージ・入力例）を描画（チャット入力は下部に配置する）
-        display_right_panel(header_container=header_container)
-        # 右画面下部にチャット入力欄を表示して、入力値を呼び出し元に返す
-        chat_message = right_column.chat_input(ct.CHAT_INPUT_HELPER_TEXT)
+        # 「社内問い合わせ」の機能説明
+        st.markdown("**【「社内問い合わせ」を選択した場合】**")
+        st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
+        st.code("【入力例】\n人事部に所属している従業員情報を一覧化して", wrap_lines=True, language=None)
 
-    return chat_message, conv_container, spinner_placeholder
+
+        
 
 
 def display_conversation_log(container=None):
