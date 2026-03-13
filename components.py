@@ -67,11 +67,15 @@ def display_right_panel(header_container=None):
     
     # 画面上部に固定の初期アシスタントメッセージを表示（セッションには追加しない）
     with target.chat_message("assistant"):
-        target.success(
-                    "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-                    "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-                )
-        target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+        # アイコンと吹き出しを横並びにするレイアウト
+        col_icon, col_bubble = target.columns([1, 9])
+        # 左にアイコン（絵文字）、右に吹き出しでメッセージ表示
+        col_icon.markdown("🤖", unsafe_allow_html=False)
+        col_bubble.success(
+            "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
+            "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
+        )
+        col_bubble.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴の描画は呼び出し元で行う（即時表示の制御を main.py に委ねる）
 
