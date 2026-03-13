@@ -91,6 +91,29 @@ def display_right_panel(header_container=None):
     # （チャット入力は呼び出し元のレイアウトで下部に表示するため、ここでは作らない）
     return None
 
+
+def display_app_title():
+    """
+    画面タイトルの表示（`main.py` からの互換ラッパー）
+    """
+    st.markdown(f"# {ct.APP_NAME}")
+
+
+def display_select_mode():
+    """
+    モード選択表示（サイドバーに配置）
+    """
+    with st.sidebar:
+        display_left_panel()
+
+
+def display_initial_ai_message():
+    """
+    初期のAIメッセージ表示（`main.py` 互換ラッパー）。
+    """
+    # 既存の display_right_panel を利用してタイトルと初期メッセージを表示
+    display_right_panel()
+
 def display_app_layout():
     """
     アプリのレイアウト表示
