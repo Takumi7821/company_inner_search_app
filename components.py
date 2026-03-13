@@ -66,12 +66,12 @@ def display_right_panel(header_container=None):
     target.markdown(f"# {ct.APP_NAME}")
     
     # 画面上部に固定の初期アシスタントメッセージを表示（セッションには追加しない）
-    with st.chat_message("assistant"):
-        st.success(
+    with target.chat_message("assistant"):
+        target.success(
                     "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
                     "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
                 )
-        st.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+        target.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
 
     # 会話履歴の描画は呼び出し元で行う（即時表示の制御を main.py に委ねる）
 
