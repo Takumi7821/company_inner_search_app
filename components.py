@@ -58,38 +58,26 @@ def display_left_panel():
 
 def display_right_panel(header_container=None):
     """
-    右画面の表示
+    AIメッセージの初期表示
     """
-    # 固定ヘッダー描画先を決定（会話履歴は別のコンテナに描画される想定）
-    target = header_container if header_container is not None else st
-    # タイトル（画面上部に固定）
-    target.markdown(f"# {ct.APP_NAME}")
-    
-    # 画面上部に固定の初期アシスタントメッセージを表示（セッションには追加しない）
-    with target.chat_message("assistant"):
-        # アイコンと吹き出しを横並びにするレイアウト（columns はコンテキストマネージャーではない）
-        col_icon, col_bubble = target.columns([1, 9])
-        # 左にアイコン（絵文字）、右に吹き出しでメッセージ表示
-        col_icon.
-        col_bubble.success(
-            "こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。"
-            "サイドメニューで利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。"
-        )
-        col_bubble.warning("具体的に入力した方が行きたい通りの回答を得られやすです。")
+    with st.chat_message("assistant"):
+        # 「st.success()」とすると緑枠で表示される
+        st.markdown("こんにちは。私は社内文書の情報をもとに回答する生成AIチャットボットです。上記で利用目的を選択し、画面下部のチャット欄からメッセージを送信してください。")
 
-    # 会話履歴の描画は呼び出し元で行う（即時表示の制御を main.py に委ねる）
+        # 「社内文書検索」の機能説明
+        st.markdown("**【「社内文書検索」を選択した場合】**")
+        # 「st.info()」を使うと青枠で表示される
+        st.info("入力内容と関連性が高い社内文書のありかを検索できます。")
+        # 「st.code()」を使うとコードブロックの装飾で表示される
+        # 「wrap_lines=True」で折り返し設定、「language=None」で非装飾とする
+        st.code("【入力例】\n社員の育成方針に関するMTGの議事録", wrap_lines=True, language=None)
 
-    # 右側に入力例（これからの会話）を追記（履歴の下、入力欄の上に表示）
-    example_conversation = (
-        "ユーザー: 社員の育成方針に関するMTGの議事録を探して\n"
-        "アシスタント: 以下のファイルに該当する可能性があります。...\n"
-        "ユーザー: その中で、評価基準に関する部分だけ抜粋して教えて。\n"
-        "アシスタント: （該当ページの抜粋を提示）"
-    )
-    target.code(example_conversation, wrap_lines=True, language=None)
+        # 「社内問い合わせ」の機能説明
+        st.markdown("**【「社内問い合わせ」を選択した場合】**")
+        st.info("質問・要望に対して、社内文書の情報をもとに回答を得られます。")
+        st.code("【入力例】\n人事部に所属している従業員情報を一覧化して", wrap_lines=True, language=None)
 
-    # （チャット入力は呼び出し元のレイアウトで下部に表示するため、ここでは作らない）
-    return None
+
 
 
 def display_app_title():
